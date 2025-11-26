@@ -1,4 +1,4 @@
-package com.standofit.standofitapi.shared.domain.exception.voexceptions.string
+package com.standofit.standofitapi.shared.domain.voexceptions.string
 
 import com.standofit.standofitapi.shared.error.ErrorInfo
 

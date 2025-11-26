@@ -1,7 +1,7 @@
 package com.standofit.standofitapi.shared.domain.vo
 
-import com.standofit.standofitapi.shared.domain.exception.voexceptions.biginteger.BigIntegerVOException
-import com.standofit.standofitapi.shared.domain.exception.voexceptions.biginteger.BigIntegerVOMessages
+import com.standofit.standofitapi.shared.domain.voexceptions.biginteger.BigIntegerVOException
+import com.standofit.standofitapi.shared.domain.voexceptions.biginteger.BigIntegerVOMessages
 import java.math.BigInteger
 
 abstract class BigIntegerVO(value: BigInteger) : BaseVO<BigInteger>(value) {

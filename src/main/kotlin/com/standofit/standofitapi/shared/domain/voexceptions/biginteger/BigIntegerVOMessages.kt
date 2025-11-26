@@ -1,4 +1,4 @@
-package com.standofit.standofitapi.shared.domain.exception.voexceptions.biginteger
+package com.standofit.standofitapi.shared.domain.voexceptions.biginteger
 
 import com.standofit.standofitapi.shared.error.ErrorInfo
 

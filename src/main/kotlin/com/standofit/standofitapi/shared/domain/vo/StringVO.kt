@@ -1,7 +1,7 @@
 package com.standofit.standofitapi.shared.domain.vo
 
-import com.standofit.standofitapi.shared.domain.exception.voexceptions.string.StringVOException
-import com.standofit.standofitapi.shared.domain.exception.voexceptions.string.StringVOMessages
+import com.standofit.standofitapi.shared.domain.voexceptions.string.StringVOException
+import com.standofit.standofitapi.shared.domain.voexceptions.string.StringVOMessages
 
 abstract class StringVO(
     value: String
