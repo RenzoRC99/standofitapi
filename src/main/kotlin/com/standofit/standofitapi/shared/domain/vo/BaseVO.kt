@@ -1,6 +1,6 @@
-package com.standofit.standofitapi.shared.domain
+package com.standofit.standofitapi.shared.domain.vo
 
-abstract class BaseValueObject<T>(val value: T) {
+abstract class BaseVO<T>(val value: T) {
 
     init {
         validateType(value)
@@ -10,7 +10,7 @@ abstract class BaseValueObject<T>(val value: T) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is BaseValueObject<*>) return false
+        if (other !is BaseVO<*>) return false
         return value == other.value
     }
 
