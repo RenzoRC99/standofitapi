@@ -1,4 +1,5 @@
-import com.standofit.standofitapi.workouttpl.domain.WorkoutExercise
+package com.standofit.standofitapi.workouttpl.domain
+
 import com.standofit.standofitapi.workouttpl.domain.exception.WorkoutDayErrors
 import com.standofit.standofitapi.workouttpl.domain.exception.WorkoutDayException
 import com.standofit.standofitapi.workouttpl.domain.vo.WorkoutDayId

@@ -5,7 +5,6 @@ import java.math.BigInteger
 
 class WorkoutExerciseSets(
     value: BigInteger
-
 ) : BigIntegerVO(value) {
     override fun validateType(value: BigInteger) {
         TODO("Not yet implemented")

@@ -1,6 +1,5 @@
 package com.standofit.standofitapi.workouttpl.domain
 
-import WorkoutDay
 import com.standofit.standofitapi.workouttpl.domain.exception.WorkoutTplErrors
 import com.standofit.standofitapi.workouttpl.domain.exception.WorkoutTplException
 import com.standofit.standofitapi.workouttpl.domain.vo.*
@@ -40,79 +39,110 @@ class WorkoutTpl private constructor(
         }
     }
 
-    fun changeName(newName: WorkoutTplName): WorkoutTpl {
-        return create(
-            id, newName, description, level, status, createdAt, updatedAt, days
-        )
-    }
+    fun changeName(
+        newName: WorkoutTplName,
+        updatedAt: WorkoutTplUpdatedAt
+    ): WorkoutTpl =
+        copy(name = newName, updatedAt = updatedAt)
 
-    fun changeDescription(newDescription: WorkoutTplDescription): WorkoutTpl {
-        return create(id, name, newDescription, level, status, createdAt, updatedAt, days)
-    }
+    fun changeDescription(
+        newDescription: WorkoutTplDescription,
+        updatedAt: WorkoutTplUpdatedAt
+    ): WorkoutTpl =
+        copy(description = newDescription, updatedAt = updatedAt)
 
-    fun addDay(day: WorkoutDay): WorkoutTpl {
+    fun addDay(
+        day: WorkoutDay,
+        updatedAt: WorkoutTplUpdatedAt
+    ): WorkoutTpl {
         checkDraft()
         if (days.any { it.day == day.day }) {
             throw WorkoutTplException(WorkoutTplErrors.DAY_ALREADY_EXISTS)
         }
-        return create(id, name, description, level, status, createdAt, updatedAt, days + day)
+        return copy(days = days + day, updatedAt = updatedAt)
     }
 
-    fun removeDay(dayNumber: WorkoutDayNumber): WorkoutTpl {
+    fun removeDay(
+        dayNumber: WorkoutDayNumber,
+        updatedAt: WorkoutTplUpdatedAt
+    ): WorkoutTpl {
         checkDraft()
-        return WorkoutTpl.create(
-            id,
-            name,
-            description,
-            level,
-            status,
-            createdAt,
-            updatedAt,
-            days.filter { it.day != dayNumber })
+        return copy(
+            days = days.filter { it.day != dayNumber },
+            updatedAt = updatedAt
+        )
     }
 
-    fun addExercise(dayNumber: WorkoutDayNumber, exercise: WorkoutExercise): WorkoutTpl {
+    fun addExercise(
+        dayNumber: WorkoutDayNumber,
+        exercise: WorkoutExercise,
+        updatedAt: WorkoutTplUpdatedAt
+    ): WorkoutTpl {
         checkDraft()
-        val day = days.find { it.day == dayNumber } ?: throw WorkoutTplException(WorkoutTplErrors.DAY_NOT_FOUND)
-        val updatedDay = day.addExercise(exercise)
-        return updateDay(updatedDay)
+        val day = findDay(dayNumber)
+        return updateDay(day.addExercise(exercise), updatedAt)
     }
 
-    fun removeExercise(dayNumber: WorkoutDayNumber, exerciseId: WorkoutExerciseId): WorkoutTpl {
+    fun removeExercise(
+        dayNumber: WorkoutDayNumber,
+        exerciseId: WorkoutExerciseId,
+        updatedAt: WorkoutTplUpdatedAt
+    ): WorkoutTpl {
         checkDraft()
-        val day = days.find { it.day == dayNumber } ?: throw WorkoutTplException(WorkoutTplErrors.DAY_NOT_FOUND)
-        val updatedDay = day.removeExercise(exerciseId)
-        return updateDay(updatedDay)
+        val day = findDay(dayNumber)
+        return updateDay(day.removeExercise(exerciseId), updatedAt)
     }
 
-    fun changeExercise(dayNumber: WorkoutDayNumber, exercise: WorkoutExercise): WorkoutTpl {
+    fun changeExercise(
+        dayNumber: WorkoutDayNumber,
+        exercise: WorkoutExercise,
+        updatedAt: WorkoutTplUpdatedAt
+    ): WorkoutTpl {
         checkDraft()
-        val day = days.find { it.day == dayNumber } ?: throw WorkoutTplException(WorkoutTplErrors.DAY_NOT_FOUND)
-        val updatedDay = day.changeExercise(exercise)
-        return updateDay(updatedDay)
+        val day = findDay(dayNumber)
+        return updateDay(day.changeExercise(exercise), updatedAt)
     }
 
-    fun publish(): WorkoutTpl {
+    fun publish(updatedAt: WorkoutTplUpdatedAt): WorkoutTpl {
         if (status != WorkoutTplStatus.DRAFT) {
             throw WorkoutTplException(WorkoutTplErrors.INVALID_STATUS_FOR_PUBLISH)
         }
         if (days.isEmpty()) {
             throw WorkoutTplException(WorkoutTplErrors.CANNOT_PUBLISH_EMPTY)
         }
-        return WorkoutTpl.create(id, name, description, level, WorkoutTplStatus.PUBLISHED, createdAt, updatedAt, days)
+        return copy(status = WorkoutTplStatus.PUBLISHED, updatedAt = updatedAt)
     }
 
-    fun archive(): WorkoutTpl {
+    fun archive(updatedAt: WorkoutTplUpdatedAt): WorkoutTpl {
         if (status == WorkoutTplStatus.ARCHIVED) {
             throw WorkoutTplException(WorkoutTplErrors.ALREADY_ARCHIVED)
         }
-        return WorkoutTpl.create(id, name, description, level, WorkoutTplStatus.ARCHIVED, createdAt, updatedAt, days)
+        return copy(status = WorkoutTplStatus.ARCHIVED, updatedAt = updatedAt)
     }
 
-    private fun updateDay(updatedDay: WorkoutDay): WorkoutTpl {
-        val newDays = days.map { if (it.day == updatedDay.day) updatedDay else it }
-        return WorkoutTpl.create(id, name, description, level, status, createdAt, updatedAt, newDays)
+    private fun copy(
+        updatedAt: WorkoutTplUpdatedAt,
+        name: WorkoutTplName = this.name,
+        description: WorkoutTplDescription = this.description,
+        level: WorkoutTplLevel = this.level,
+        status: WorkoutTplStatus = this.status,
+        days: List<WorkoutDay> = this.days
+    ): WorkoutTpl =
+        create(id, name, description, level, status, createdAt, updatedAt, days)
+
+    private fun updateDay(
+        updatedDay: WorkoutDay,
+        updatedAt: WorkoutTplUpdatedAt
+    ): WorkoutTpl {
+        val newDays = days.map {
+            if (it.day == updatedDay.day) updatedDay else it
+        }
+        return copy(days = newDays, updatedAt = updatedAt)
     }
+
+    private fun findDay(dayNumber: WorkoutDayNumber): WorkoutDay =
+        days.find { it.day == dayNumber }
+            ?: throw WorkoutTplException(WorkoutTplErrors.DAY_NOT_FOUND)
 
     private fun checkDraft() {
         if (status != WorkoutTplStatus.DRAFT) {
