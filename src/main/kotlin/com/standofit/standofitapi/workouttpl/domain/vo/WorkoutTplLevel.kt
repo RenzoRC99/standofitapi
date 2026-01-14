@@ -8,5 +8,4 @@ class WorkoutTplLevel(
     override fun validateType(value: String) {
         TODO("Not yet implemented")
     }
-
 }

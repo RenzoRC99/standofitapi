@@ -9,5 +9,4 @@ class WorkoutExerciseSets(
     override fun validateType(value: BigInteger) {
         TODO("Not yet implemented")
     }
-
 }

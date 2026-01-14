@@ -9,5 +9,4 @@ class WorkoutExerciseId(
     override fun validateType(value: UUID) {
         TODO("Not yet implemented")
     }
-
 }
