@@ -6,6 +6,5 @@ class WorkoutExerciseDropset(
     value: Boolean
 ) : BooleanVO(value) {
     override fun validateType(value: Boolean) {
-        TODO("Not yet implemented")
     }
 }

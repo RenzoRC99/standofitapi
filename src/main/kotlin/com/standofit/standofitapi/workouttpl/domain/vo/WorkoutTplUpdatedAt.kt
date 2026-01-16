@@ -1,12 +1,17 @@
 package com.standofit.standofitapi.workouttpl.domain.vo
 
 import shared.domain.vo.DateVO
-import java.time.LocalDate
+import java.time.Instant
 
 class WorkoutTplUpdatedAt(
-    value: LocalDate
+    value: Instant
 ) : DateVO(value) {
-    override fun validateType(value: LocalDate) {
+    override fun validateType(value: Instant) {
         TODO("Not yet implemented")
+    }
+
+    companion object {
+        fun now(): WorkoutTplUpdatedAt =
+            WorkoutTplUpdatedAt(Instant.now())
     }
 }
