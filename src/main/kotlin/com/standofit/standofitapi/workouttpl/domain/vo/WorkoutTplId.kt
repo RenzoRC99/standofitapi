@@ -7,6 +7,7 @@ class WorkoutTplId(
     value: UUID
 ) : UUIDVO(value) {
     override fun validateType(value: UUID) {
-        TODO("Not yet implemented")
+        ensureVersion(4)
+        ensureVariant(2)
     }
 }

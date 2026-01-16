@@ -6,6 +6,9 @@ class WorkoutTplDescription(
     value: String
 ) : StringVO(value) {
     override fun validateType(value: String) {
-        TODO("Not yet implemented")
+        if (value.isNotEmpty()) {
+            ensureMaxLength(500)
+            ensureNoEmojis()
+        }
     }
 }

@@ -6,6 +6,8 @@ class WorkoutTplLevel(
     value: String
 ) : StringVO(value) {
     override fun validateType(value: String) {
-        TODO("Not yet implemented")
+        ensureNotBlank()
+        ensureAllowedCharacters(Regex("^[A-Z]+$"))
+        ensureMaxLength(20)
     }
 }

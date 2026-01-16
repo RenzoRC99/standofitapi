@@ -7,9 +7,8 @@ class WorkoutExerciseSets(
     value: BigInteger
 ) : BigIntegerVO(value) {
     override fun validateType(value: BigInteger) {
-        ensureMax(BigInteger.valueOf(6000))
-        ensureMin(BigInteger.ONE)
-        ensureNegative()
         ensurePositive()
+        ensureMin(BigInteger.ONE)
+        ensureMax(BigInteger.valueOf(100))
     }
 }

@@ -6,6 +6,9 @@ class WorkoutTplName(
     value: String
 ) : StringVO(value) {
     override fun validateType(value: String) {
-        TODO("Not yet implemented")
+        ensureNotBlank()
+        ensureMinLength(3)
+        ensureMaxLength(100)
+        ensureNoEmojis()
     }
 }

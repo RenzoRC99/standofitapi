@@ -7,6 +7,6 @@ class WorkoutTplCreatedAt(
     value: Instant,
 ) : DateVO(value) {
     override fun validateType(value: Instant) {
-        TODO("Not yet implemented")
+        ensureNotInFuture()
     }
 }
