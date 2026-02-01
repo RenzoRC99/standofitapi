@@ -12,7 +12,7 @@ class WorkoutTplCreatedAt(
     }
 
     companion object {
-        fun now(): WorkoutTplUpdatedAt =
-            WorkoutTplUpdatedAt(Instant.now())
+        fun now(): WorkoutTplCreatedAt =
+            WorkoutTplCreatedAt(Instant.now())
     }
 }
