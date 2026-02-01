@@ -8,5 +8,11 @@ class WorkoutTplCreatedAt(
 ) : DateVO(value) {
     override fun validateType(value: Instant) {
         ensureNotInFuture()
+        ensureNotInPast()
+    }
+
+    companion object {
+        fun now(): WorkoutTplUpdatedAt =
+            WorkoutTplUpdatedAt(Instant.now())
     }
 }

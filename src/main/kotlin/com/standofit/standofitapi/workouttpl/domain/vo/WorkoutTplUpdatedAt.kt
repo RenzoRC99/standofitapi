@@ -8,6 +8,7 @@ class WorkoutTplUpdatedAt(
 ) : DateVO(value) {
     override fun validateType(value: Instant) {
         ensureNotInFuture()
+        ensureNotInPast()
     }
 
     companion object {
