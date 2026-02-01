@@ -11,5 +11,8 @@ enum class WorkoutTplErrors(
     CANNOT_PUBLISH_EMPTY("WTPL_003", "Cannot publish a template without days"),
     INVALID_STATUS_FOR_PUBLISH("WTPL_004", "Only draft templates can be published"),
     ALREADY_ARCHIVED("WTPL_005", "Template is already archived"),
-    INVALID_STATUS_FOR_MODIFY("WTPL_006", "Only draft templates can be modified")
+    INVALID_STATUS_FOR_MODIFY("WTPL_006", "Only draft templates can be modified"),
+    INVALID_UPDATED_AT("WTPL_007", "UpdatedAt cannot be earlier than CreatedAt"),
+    UPDATED_AT_CANNOT_DECREASE("WTPL_008", "UpdatedAt cannot decrease compared to previous value"),
+    UPDATED_AT_IN_FUTURE("WTPL_009", "UpdatedAt cannot be in the future")
 }
