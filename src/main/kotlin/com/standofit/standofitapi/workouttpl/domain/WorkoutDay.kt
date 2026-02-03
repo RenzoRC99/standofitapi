@@ -11,37 +11,41 @@ class WorkoutDay private constructor(
     val day: WorkoutDayNumber,
     val exercises: List<WorkoutExercise>
 ) {
+
     companion object {
         fun create(
             id: WorkoutDayId,
             day: WorkoutDayNumber,
             exercises: List<WorkoutExercise> = emptyList()
         ): WorkoutDay {
+            if (exercises.isEmpty()) {
+                throw WorkoutDayException(WorkoutDayErrors.DAY_WITHOUT_EXERCISES)
+            }
             return WorkoutDay(id, day, exercises)
         }
     }
-
-    fun addExercise(workoutExercise: WorkoutExercise): WorkoutDay {
-        if (exercises.any { it.id == workoutExercise.id }) {
+    
+    fun addExercise(exercise: WorkoutExercise): WorkoutDay {
+        if (exercises.any { it.id == exercise.id }) {
             throw WorkoutDayException(WorkoutDayErrors.EXERCISE_ALREADY_EXISTS)
         }
-        return create(id, day, exercises + workoutExercise)
+        return create(id, day, exercises + exercise)
     }
 
-    fun removeExercise(workoutExerciseId: WorkoutExerciseId): WorkoutDay {
-        if (exercises.none { it.id == workoutExerciseId }) {
+    fun removeExercise(exerciseId: WorkoutExerciseId): WorkoutDay {
+        if (exercises.none { it.id == exerciseId }) {
             throw WorkoutDayException(WorkoutDayErrors.EXERCISE_NOT_FOUND)
         }
-        return create(id, day, exercises.filter { it.id != workoutExerciseId })
+        return create(id, day, exercises.filterNot { it.id == exerciseId })
     }
 
-    fun changeExercise(workoutExercise: WorkoutExercise): WorkoutDay {
-        val index = exercises.indexOfFirst { it.id == workoutExercise.id }
+    fun changeExercise(exercise: WorkoutExercise): WorkoutDay {
+        val index = exercises.indexOfFirst { it.id == exercise.id }
         if (index == -1) {
             throw WorkoutDayException(WorkoutDayErrors.EXERCISE_NOT_FOUND)
         }
         val newExercises = exercises.toMutableList()
-        newExercises[index] = workoutExercise
+        newExercises[index] = exercise
         return create(id, day, newExercises)
     }
 }

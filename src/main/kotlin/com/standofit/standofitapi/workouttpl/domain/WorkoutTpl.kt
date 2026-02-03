@@ -14,7 +14,7 @@ class WorkoutTpl private constructor(
     val status: WorkoutTplStatus,
     val createdAt: WorkoutTplCreatedAt,
     val updatedAt: WorkoutTplUpdatedAt,
-    val days: List<WorkoutDay>
+    val days: WorkoutDays
 ) {
     companion object {
         fun create(
@@ -23,7 +23,7 @@ class WorkoutTpl private constructor(
             description: WorkoutTplDescription,
             level: WorkoutTplLevel,
             status: WorkoutTplStatus = WorkoutTplStatus.DRAFT,
-            days: List<WorkoutDay> = emptyList()
+            days: WorkoutDays = WorkoutDays.create()
         ): WorkoutTpl {
             return WorkoutTpl(
                 id,
@@ -58,51 +58,36 @@ class WorkoutTpl private constructor(
 
     fun addDay(day: WorkoutDay): WorkoutTpl {
         assertDraft()
-        assertDayDoesNotExist(day.day)
-
-        val updatedAt = nextUpdatedAt()
-        return copyWith(
-            days = days + day,
-            updatedAt = updatedAt
-        )
+        val updatedDays = days.add(day)
+        return copyWith(days = updatedDays, updatedAt = nextUpdatedAt())
     }
 
     fun removeDay(dayNumber: WorkoutDayNumber): WorkoutTpl {
         assertDraft()
-        assertDayExists(dayNumber)
-
-        val updatedAt = nextUpdatedAt()
-        return copyWith(
-            days = days.filter { it.day != dayNumber },
-            updatedAt = updatedAt
-        )
+        val updatedDays = days.remove(dayNumber)
+        return copyWith(days = updatedDays, updatedAt = nextUpdatedAt())
     }
 
     fun addExercise(dayNumber: WorkoutDayNumber, exercise: WorkoutExercise): WorkoutTpl {
         assertDraft()
-        val updatedAt = nextUpdatedAt()
-        return updateDay(
-            requireDay(dayNumber).addExercise(exercise),
-            updatedAt
-        )
+        val day = days.find(dayNumber).addExercise(exercise)
+        val updatedDays = days.update(day)
+        return copyWith(days = updatedDays, updatedAt = nextUpdatedAt())
     }
 
     fun removeExercise(dayNumber: WorkoutDayNumber, exerciseId: WorkoutExerciseId): WorkoutTpl {
         assertDraft()
-        val updatedAt = nextUpdatedAt()
-        return updateDay(
-            requireDay(dayNumber).removeExercise(exerciseId),
-            updatedAt
-        )
+        val day = days.find(dayNumber).removeExercise(exerciseId)
+        val updatedDays = days.update(day)
+        return copyWith(days = updatedDays, updatedAt = nextUpdatedAt())
+
     }
 
     fun changeExercise(dayNumber: WorkoutDayNumber, exercise: WorkoutExercise): WorkoutTpl {
         assertDraft()
-        val updatedAt = nextUpdatedAt()
-        return updateDay(
-            requireDay(dayNumber).changeExercise(exercise),
-            updatedAt
-        )
+        val day = days.find(dayNumber).changeExercise(exercise)
+        val updatedDays = days.update(day)
+        return copyWith(days = updatedDays, updatedAt = nextUpdatedAt())
     }
 
     fun publish(): WorkoutTpl {
@@ -122,14 +107,6 @@ class WorkoutTpl private constructor(
             updatedAt = updatedAt
         )
     }
-
-    private fun updateDay(updatedDay: WorkoutDay, updatedAt: WorkoutTplUpdatedAt): WorkoutTpl {
-        val newDays = days.map { if (it.day == updatedDay.day) updatedDay else it }
-        return copyWith(days = newDays, updatedAt = updatedAt)
-    }
-
-    private fun requireDay(dayNumber: WorkoutDayNumber): WorkoutDay =
-        days.find { it.day == dayNumber } ?: throw WorkoutTplException(WorkoutTplErrors.DAY_NOT_FOUND)
 
     private fun assertDraft() {
         if (status != WorkoutTplStatus.DRAFT) {
@@ -158,7 +135,7 @@ class WorkoutTpl private constructor(
         description: WorkoutTplDescription = this.description,
         level: WorkoutTplLevel = this.level,
         status: WorkoutTplStatus = this.status,
-        days: List<WorkoutDay> = this.days
+        days: WorkoutDays = this.days
     ): WorkoutTpl =
         WorkoutTpl(id, name, description, level, status, createdAt, updatedAt, days)
 
@@ -177,18 +154,6 @@ class WorkoutTpl private constructor(
         }
         require(newUpdatedAt.value <= Instant.now()) {
             WorkoutTplErrors.UPDATED_AT_IN_FUTURE.message
-        }
-    }
-
-    private fun assertDayDoesNotExist(dayNumber: WorkoutDayNumber) {
-        if (days.any { it.day == dayNumber }) {
-            throw WorkoutTplException(WorkoutTplErrors.DAY_ALREADY_EXISTS)
-        }
-    }
-
-    private fun assertDayExists(dayNumber: WorkoutDayNumber) {
-        if (days.none { it.day == dayNumber }) {
-            throw WorkoutTplException(WorkoutTplErrors.DAY_NOT_FOUND)
         }
     }
 }
