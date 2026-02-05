@@ -68,7 +68,7 @@ class WorkoutTpl private constructor(
         return copyWith(days = updatedDays, updatedAt = nextUpdatedAt())
     }
 
-    fun addExercise(dayNumber: WorkoutDayNumber, exercise: WorkoutExercise): WorkoutTpl {
+    fun addExerciseToDay(dayNumber: WorkoutDayNumber, exercise: WorkoutExercise): WorkoutTpl {
         assertDraft()
         val day = days.find(dayNumber).addExercise(exercise)
         val updatedDays = days.update(day)
@@ -83,11 +83,60 @@ class WorkoutTpl private constructor(
 
     }
 
-    fun changeExercise(dayNumber: WorkoutDayNumber, exercise: WorkoutExercise): WorkoutTpl {
+    fun replaceExerciseInDay(
+        dayNumber: WorkoutDayNumber,
+        oldExerciseId: WorkoutExerciseId,
+        newExercise: WorkoutExercise
+    ): WorkoutTpl {
         assertDraft()
-        val day = days.find(dayNumber).changeExercise(exercise)
-        val updatedDays = days.update(day)
+        val day = days.find(dayNumber)
+        val updatedDay = day.replaceExercise(oldExerciseId, newExercise)
+        val updatedDays = days.update(updatedDay)
         return copyWith(days = updatedDays, updatedAt = nextUpdatedAt())
+    }
+
+    fun changeRepsInDay(
+        dayNumber: WorkoutDayNumber,
+        exerciseId: WorkoutExerciseId,
+        reps: WorkoutExerciseReps
+    ): WorkoutTpl {
+        assertDraft()
+        val day = days.find(dayNumber)
+        val updatedDay = day.changeExerciseAttributes(exerciseId = exerciseId, reps = reps)
+        return copyWith(days = days.update(updatedDay), updatedAt = nextUpdatedAt())
+    }
+
+    fun changeSetsInDay(
+        dayNumber: WorkoutDayNumber,
+        exerciseId: WorkoutExerciseId,
+        sets: WorkoutExerciseSets
+    ): WorkoutTpl {
+        assertDraft()
+        val day = days.find(dayNumber)
+        val updatedDay = day.changeExerciseAttributes(exerciseId = exerciseId, sets = sets)
+        return copyWith(days = days.update(updatedDay), updatedAt = nextUpdatedAt())
+    }
+
+    fun changeRestTimeInDay(
+        dayNumber: WorkoutDayNumber,
+        exerciseId: WorkoutExerciseId,
+        restTime: WorkoutExerciseRestTime
+    ): WorkoutTpl {
+        assertDraft()
+        val day = days.find(dayNumber)
+        val updatedDay = day.changeExerciseAttributes(exerciseId = exerciseId, restTime = restTime)
+        return copyWith(days = days.update(updatedDay), updatedAt = nextUpdatedAt())
+    }
+
+    fun toggleDropsetInDay(
+        dayNumber: WorkoutDayNumber,
+        exerciseId: WorkoutExerciseId,
+        currentDropset: Boolean
+    ): WorkoutTpl {
+        assertDraft()
+        val day = days.find(dayNumber)
+        val updatedDay = day.changeExerciseAttributes(exerciseId = exerciseId, dropset = !currentDropset)
+        return copyWith(days = days.update(updatedDay), updatedAt = nextUpdatedAt())
     }
 
     fun publish(): WorkoutTpl {

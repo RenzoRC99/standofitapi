@@ -2,9 +2,7 @@ package com.standofit.standofitapi.workouttpl.domain
 
 import com.standofit.standofitapi.workouttpl.domain.exception.WorkoutDayErrors
 import com.standofit.standofitapi.workouttpl.domain.exception.WorkoutDayException
-import com.standofit.standofitapi.workouttpl.domain.vo.WorkoutDayId
-import com.standofit.standofitapi.workouttpl.domain.vo.WorkoutDayNumber
-import com.standofit.standofitapi.workouttpl.domain.vo.WorkoutExerciseId
+import com.standofit.standofitapi.workouttpl.domain.vo.*
 
 class WorkoutDay private constructor(
     val id: WorkoutDayId,
@@ -24,7 +22,7 @@ class WorkoutDay private constructor(
             return WorkoutDay(id, day, exercises)
         }
     }
-    
+
     fun addExercise(exercise: WorkoutExercise): WorkoutDay {
         if (exercises.any { it.id == exercise.id }) {
             throw WorkoutDayException(WorkoutDayErrors.EXERCISE_ALREADY_EXISTS)
@@ -36,16 +34,44 @@ class WorkoutDay private constructor(
         if (exercises.none { it.id == exerciseId }) {
             throw WorkoutDayException(WorkoutDayErrors.EXERCISE_NOT_FOUND)
         }
-        return create(id, day, exercises.filterNot { it.id == exerciseId })
+        val updatedExercises = exercises.filterNot { it.id == exerciseId }
+        if (updatedExercises.isEmpty()) {
+            throw WorkoutDayException(WorkoutDayErrors.DAY_WITHOUT_EXERCISES)
+        }
+        return create(id, day, updatedExercises)
     }
 
-    fun changeExercise(exercise: WorkoutExercise): WorkoutDay {
-        val index = exercises.indexOfFirst { it.id == exercise.id }
-        if (index == -1) {
-            throw WorkoutDayException(WorkoutDayErrors.EXERCISE_NOT_FOUND)
-        }
+    fun replaceExercise(oldExerciseId: WorkoutExerciseId, newExercise: WorkoutExercise): WorkoutDay {
+        val index = exercises.indexOfFirst { it.id == oldExerciseId }
+        if (index == -1) throw WorkoutDayException(WorkoutDayErrors.EXERCISE_NOT_FOUND)
+
         val newExercises = exercises.toMutableList()
-        newExercises[index] = exercise
+        newExercises[index] = newExercise
+
+        return create(id, day, newExercises)
+    }
+
+    fun changeExerciseAttributes(
+        exerciseId: WorkoutExerciseId,
+        sets: WorkoutExerciseSets? = null,
+        reps: WorkoutExerciseReps? = null,
+        restTime: WorkoutExerciseRestTime? = null,
+        dropset: Boolean? = null
+    ): WorkoutDay {
+        val index = exercises.indexOfFirst { it.id == exerciseId }
+        if (index == -1) throw WorkoutDayException(WorkoutDayErrors.EXERCISE_NOT_FOUND)
+
+        val oldExercise = exercises[index]
+
+        var updatedExercise = oldExercise
+        sets?.let { updatedExercise = updatedExercise.changeSets(it) }
+        reps?.let { updatedExercise = updatedExercise.changeReps(it) }
+        restTime?.let { updatedExercise = updatedExercise.changeRestTime(it) }
+        dropset?.let { updatedExercise = updatedExercise.toggleDropset() }
+
+        val newExercises = exercises.toMutableList()
+        newExercises[index] = updatedExercise
+
         return create(id, day, newExercises)
     }
 }

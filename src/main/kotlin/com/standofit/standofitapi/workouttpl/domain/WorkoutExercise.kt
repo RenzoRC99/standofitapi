@@ -1,11 +1,9 @@
 package com.standofit.standofitapi.workouttpl.domain
 
-import com.standofit.standofitapi.workouttpl.domain.exercise.ExerciseId
 import com.standofit.standofitapi.workouttpl.domain.vo.*
 
 class WorkoutExercise private constructor(
     val id: WorkoutExerciseId,
-    val exerciseId: ExerciseId,
     val sets: WorkoutExerciseSets,
     val reps: WorkoutExerciseReps,
     val restTime: WorkoutExerciseRestTime,
@@ -14,7 +12,6 @@ class WorkoutExercise private constructor(
     companion object {
         fun create(
             id: WorkoutExerciseId,
-            exerciseId: ExerciseId,
             sets: WorkoutExerciseSets,
             reps: WorkoutExerciseReps,
             restTime: WorkoutExerciseRestTime,
@@ -22,7 +19,6 @@ class WorkoutExercise private constructor(
         ): WorkoutExercise {
             return WorkoutExercise(
                 id = id,
-                exerciseId = exerciseId,
                 sets = sets,
                 reps = reps,
                 restTime = restTime,
@@ -30,4 +26,24 @@ class WorkoutExercise private constructor(
             )
         }
     }
+
+    fun changeSets(newSets: WorkoutExerciseSets): WorkoutExercise =
+        copyWith(sets = newSets)
+
+    fun changeReps(newReps: WorkoutExerciseReps): WorkoutExercise =
+        copyWith(reps = newReps)
+
+    fun changeRestTime(newRestTime: WorkoutExerciseRestTime): WorkoutExercise =
+        copyWith(restTime = newRestTime)
+
+    fun toggleDropset(): WorkoutExercise =
+        copyWith(dropset = WorkoutExerciseDropset(!dropset.value))
+
+    private fun copyWith(
+        sets: WorkoutExerciseSets = this.sets,
+        reps: WorkoutExerciseReps = this.reps,
+        restTime: WorkoutExerciseRestTime = this.restTime,
+        dropset: WorkoutExerciseDropset = this.dropset
+    ): WorkoutExercise =
+        create(id, sets, reps, restTime, dropset)
 }
