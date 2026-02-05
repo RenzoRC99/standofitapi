@@ -7,5 +7,6 @@ enum class WorkoutDayErrors(
     override val message: String
 ) : ErrorInfo {
     EXERCISE_ALREADY_EXISTS("WDAY_001", "Exercise already exists in this day"),
-    EXERCISE_NOT_FOUND("WDAY_002", "Exercise not found in this day")
+    EXERCISE_NOT_FOUND("WDAY_002", "Exercise not found in this day"),
+    DAY_WITHOUT_EXERCISES("WDAY_003", "A day must have at least one exercise")
 }
