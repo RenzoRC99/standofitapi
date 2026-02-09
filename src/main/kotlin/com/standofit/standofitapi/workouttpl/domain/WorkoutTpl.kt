@@ -3,6 +3,7 @@ package com.standofit.standofitapi.workouttpl.domain
 import com.standofit.standofitapi.workouttpl.domain.exception.WorkoutTplErrors
 import com.standofit.standofitapi.workouttpl.domain.exception.WorkoutTplException
 import com.standofit.standofitapi.workouttpl.domain.vo.*
+import shared.domain.agregate.AggregateRoot
 import java.time.Instant
 
 
@@ -14,8 +15,8 @@ class WorkoutTpl private constructor(
     val status: WorkoutTplStatus,
     val createdAt: WorkoutTplCreatedAt,
     val updatedAt: WorkoutTplUpdatedAt,
-    val days: WorkoutDays
-) {
+    private val days: WorkoutDays
+) : AggregateRoot() {
     companion object {
         fun create(
             id: WorkoutTplId,
